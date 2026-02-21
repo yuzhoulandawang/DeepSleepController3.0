@@ -8,7 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -105,7 +104,7 @@ fun LevelFilter(
             .horizontalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {  // 这里添加缺失的括号
+    ) {
         // 全部
         FilterChip(
             selected = selectedLevel == null,
@@ -257,4 +256,4 @@ fun getLogLevelColor(level: LogLevel): Color {
         LogLevel.ERROR -> Color.Red
         LogLevel.FATAL -> Color(0xFFB71C1C)
     }
-} // 这里修正了多余的括号
+}
