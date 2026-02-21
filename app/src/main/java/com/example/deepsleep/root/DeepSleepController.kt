@@ -54,7 +54,6 @@ object DeepSleepController {
             
             true
         } catch (e: Exception) {
-            // 使用 fatal 方法传递异常堆栈
             LogRepository.fatal(TAG, "进入深度睡眠失败: ${e.message}", e.stackTraceToString())
             false
         }
@@ -97,7 +96,7 @@ object DeepSleepController {
         }
     }
     
-    // 检查是否在深度睡眠状态（版本1）
+    // 检查是否在深度睡眠状态
     fun isInDeepSleep(): Boolean {
         return isInDeepSleep
     }
@@ -114,15 +113,14 @@ object DeepSleepController {
                 val isIdle = checkDozeStatus()
                 
                 if (isIdle) {
-                    if (checkCount % 10 == 0) {  // 每10次检查记录一次，避免日志过多
+                    if (checkCount % 10 == 0) {
                         LogRepository.debug(TAG, "状态检查 #$checkCount: 正常")
                     }
                 } else {
                     LogRepository.warning(TAG, "状态检查 #$checkCount: 检测到意外退出，正在重新进入...")
-                    // 重新进入，使用相同参数
                     enterDeepSleep(blockExit = true, checkIntervalSeconds = intervalSeconds)
                     LogRepository.success(TAG, "已重新进入深度睡眠")
-                    checkCount = 0  // 重置计数
+                    checkCount = 0
                 }
             }
         }
@@ -145,7 +143,7 @@ object DeepSleepController {
         isInDeepSleep = false
     }
 
-    // 检查深度睡眠状态（使用 exec 替代 execute）
+    // 检查深度睡眠状态
     fun checkDeepSleepStatus(): Boolean {
         try {
             val powerState = RootCommander.exec("cat /sys/power/state").out
@@ -164,16 +162,10 @@ object DeepSleepController {
         }
     }
     
-    // 移除重复的 isInDeepSleep() 函数，保留上面的一个
-    
     fun forceMaintainDeepSleep() {
         try {
             if (!checkDeepSleepStatus()) {
                 LogRepository.warning(TAG, "重新进入深度睡眠")
-                // 需要提供参数，这里使用默认值
-                // 注意：enterDeepSleep 是挂起函数，不能在非挂起函数中直接调用
-                // 这里需要启动一个协程，但 forceMaintainDeepSleep 不是挂起函数，可能导致问题。
-                // 临时改为启动协程，但调用者需确保有合适的作用域。
                 CoroutineScope(Dispatchers.IO).launch {
                     enterDeepSleep(blockExit = true, checkIntervalSeconds = 10)
                 }
