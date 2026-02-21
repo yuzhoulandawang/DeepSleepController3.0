@@ -1,6 +1,5 @@
 package com.example.deepsleep.root
 
-import android.util.Log
 import com.example.deepsleep.data.LogRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +54,8 @@ object DeepSleepController {
             
             true
         } catch (e: Exception) {
-            LogRepository.error(TAG, "进入深度睡眠失败: ${e.message}", e.stackTraceToString())
+            // 使用 fatal 方法传递异常堆栈
+            LogRepository.fatal(TAG, "进入深度睡眠失败: ${e.message}", e.stackTraceToString())
             false
         }
     }
@@ -92,12 +92,12 @@ object DeepSleepController {
             
             true
         } catch (e: Exception) {
-            LogRepository.error(TAG, "退出深度睡眠失败: ${e.message}", e.stackTraceToString())
+            LogRepository.fatal(TAG, "退出深度睡眠失败: ${e.message}", e.stackTraceToString())
             false
         }
     }
     
-    // 检查是否在深度睡眠状态
+    // 检查是否在深度睡眠状态（版本1）
     fun isInDeepSleep(): Boolean {
         return isInDeepSleep
     }
@@ -119,6 +119,7 @@ object DeepSleepController {
                     }
                 } else {
                     LogRepository.warning(TAG, "状态检查 #$checkCount: 检测到意外退出，正在重新进入...")
+                    // 重新进入，使用相同参数
                     enterDeepSleep(blockExit = true, checkIntervalSeconds = intervalSeconds)
                     LogRepository.success(TAG, "已重新进入深度睡眠")
                     checkCount = 0  // 重置计数
@@ -144,58 +145,62 @@ object DeepSleepController {
         isInDeepSleep = false
     }
 
-    
+    // 检查深度睡眠状态（使用 exec 替代 execute）
     fun checkDeepSleepStatus(): Boolean {
         try {
-            val powerState = RootCommander.execute("cat /sys/power/state").stdout
-            val isInDeepSleep = powerState.contains("mem") || powerState.contains("freeze")
+            val powerState = RootCommander.exec("cat /sys/power/state").out
+            val isInDeepSleep = powerState.any { it.contains("mem") || it.contains("freeze") }
             
             if (isInDeepSleep) {
-                Logger.log(Logger.Level.INFO, "DeepSleepController", "当前处于深度睡眠状态")
+                LogRepository.info(TAG, "当前处于深度睡眠状态")
                 return true
             } else {
-                Logger.log(Logger.Level.DEBUG, "DeepSleepController", "当前未处于深度睡眠状态")
+                LogRepository.debug(TAG, "当前未处于深度睡眠状态")
                 return false
             }
         } catch (e: Exception) {
-            Logger.log(Logger.Level.ERROR, "DeepSleepController", "检查状态失败: ${e.message}")
+            LogRepository.error(TAG, "检查状态失败: ${e.message}")
             return false
         }
     }
     
-    fun isInDeepSleep(): Boolean {
-        return checkDeepSleepStatus()
-    }
+    // 移除重复的 isInDeepSleep() 函数，保留上面的一个
     
     fun forceMaintainDeepSleep() {
         try {
             if (!checkDeepSleepStatus()) {
-                Logger.log(Logger.Level.WARNING, "DeepSleepController", "重新进入深度睡眠")
-                enterDeepSleep()
+                LogRepository.warning(TAG, "重新进入深度睡眠")
+                // 需要提供参数，这里使用默认值
+                // 注意：enterDeepSleep 是挂起函数，不能在非挂起函数中直接调用
+                // 这里需要启动一个协程，但 forceMaintainDeepSleep 不是挂起函数，可能导致问题。
+                // 临时改为启动协程，但调用者需确保有合适的作用域。
+                CoroutineScope(Dispatchers.IO).launch {
+                    enterDeepSleep(blockExit = true, checkIntervalSeconds = 10)
+                }
                 return
             }
             
-            RootCommander.execute("echo 'mem' > /sys/power/state", timeout = 5)
+            RootCommander.exec("echo 'mem' > /sys/power/state", timeout = 5)
             
             val wakeupProcesses = listOf("alarmd", "netd", "system_server", "com.android.systemui")
             for (process in wakeupProcesses) {
                 try {
-                    RootCommander.execute("renice 19 $(pidof $process) 2>/dev/null", timeout = 3)
+                    RootCommander.exec("renice 19 \$(pidof $process) 2>/dev/null", timeout = 3)
                 } catch (e: Exception) {
                     // 忽略单个进程失败
                 }
             }
             
-            Logger.log(Logger.Level.SUCCESS, "DeepSleepController", "已强制维持深度睡眠")
+            LogRepository.success(TAG, "已强制维持深度睡眠")
         } catch (e: Exception) {
-            Logger.log(Logger.Level.ERROR, "DeepSleepController", "维持失败: ${e.message}")
+            LogRepository.error(TAG, "维持失败: ${e.message}")
         }
     }
     
     fun getDeepSleepStatusInfo(): String {
         try {
-            val powerState = RootCommander.execute("cat /sys/power/state").stdout.trim()
-            val wakeupCount = RootCommander.execute("cat /sys/power/wakeup_count").stdout.trim()
+            val powerState = RootCommander.exec("cat /sys/power/state").out.firstOrNull()?.trim() ?: "unknown"
+            val wakeupCount = RootCommander.exec("cat /sys/power/wakeup_count").out.firstOrNull()?.trim() ?: "unknown"
             val hookStatus = if (checkDeepSleepStatus()) "已激活" else "未激活"
             
             return "深度睡眠状态信息:\n电源状态: $powerState\n唤醒计数: $wakeupCount\nHook状态: $hookStatus"
@@ -203,7 +208,6 @@ object DeepSleepController {
             return "获取失败: ${e.message}"
         }
     }
-
 
     /**
      * 检查当前是否处于深度睡眠状态
@@ -216,5 +220,4 @@ object DeepSleepController {
             false
         }
     }
-
 }
