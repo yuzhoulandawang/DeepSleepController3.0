@@ -74,9 +74,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("logs") {
+                            // ✅ 修正参数名为 onBack
                             LogsScreen(onBack = { navController.popBackStack() })
                         }
                         composable("whitelist") {
+                            // ✅ 修正参数名为 onBack
                             WhitelistScreen(onBack = { navController.popBackStack() })
                         }
                         composable("cpuParams") {
@@ -85,7 +87,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("settings") {
-                            SettingsScreen(onBack = { navController.popBackStack() })
+                            SettingsScreen(onNavigateBack = { navController.popBackStack() })
                         }
                     }
                 }
