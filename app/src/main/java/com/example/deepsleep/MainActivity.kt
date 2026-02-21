@@ -74,10 +74,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("logs") {
-                            LogsScreen(onNavigateBack = { navController.popBackStack() })
+                            LogsScreen(onBack = { navController.popBackStack() })
                         }
                         composable("whitelist") {
-                            WhitelistScreen(onNavigateBack = { navController.popBackStack() })
+                            WhitelistScreen(onBack = { navController.popBackStack() })
                         }
                         composable("cpuParams") {
                             CpuParamsScreen(
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("settings") {
-                            SettingsScreen(onNavigateBack = { navController.popBackStack() })
+                            SettingsScreen(onBack = { navController.popBackStack() })
                         }
                     }
                 }
