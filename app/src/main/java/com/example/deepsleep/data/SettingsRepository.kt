@@ -153,18 +153,7 @@ class SettingsRepository(private val context: Context) {
             // 兼容旧版本
             deepSleepEnabled = preferences[PreferencesKeys.DEEP_SLEEP_ENABLED] ?: true,
             cpuMode = preferences[PreferencesKeys.CPU_MODE] ?: "daily",
-            autoCpuMode = preferences[PreferencesKeys.AUTO_CPU_MODE] ?: true,
-            
-            // UI 状态字段（默认值）
-            deepSleepHookEnabled = preferences[PreferencesKeys.DEEP_SLEEP_HOOK_ENABLED] ?: true,
-            deepDozeEnabled = preferences[PreferencesKeys.DEEP_DOZE_ENABLED] ?: true,
-            processSuppressEnabled = preferences[PreferencesKeys.SUPPRESS_ENABLED] ?: true,
-            backgroundOptEnabled = preferences[PreferencesKeys.BG_OPT_ENABLED] ?: true,
-            powerSaverEnabled = false,
-            batterySaving = false,
-            dozeEnabled = preferences[PreferencesKeys.DEEP_DOZE_ENABLED] ?: true,
-            cpuOptEnabled = preferences[PreferencesKeys.CPU_OPT_ENABLED] ?: false,
-            suppressLevel = 1
+            autoCpuMode = preferences[PreferencesKeys.AUTO_CPU_MODE] ?: true
         )
     }
     
