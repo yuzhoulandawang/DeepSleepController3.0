@@ -142,9 +142,6 @@ class SettingsRepository(private val context: Context) {
             
             // 后台优化
             backgroundOptimizationEnabled = preferences[PreferencesKeys.BG_OPT_ENABLED] ?: true,
-            backgroundOptLevel = preferences[PreferencesKeys.BACKGROUND_OPT_LEVEL] ?: 1,
-            powerSaverLevel = preferences[PreferencesKeys.POWER_SAVER_LEVEL] ?: 1,
-            customMode = preferences[PreferencesKeys.CUSTOM_MODE] ?: "",
             
             // 其他
             bootStartEnabled = preferences[PreferencesKeys.BOOT_START_ENABLED] ?: false,
@@ -176,7 +173,7 @@ class SettingsRepository(private val context: Context) {
     suspend fun setDeepSleepHookEnabled(enabled: Boolean) {
         context.dataStore.edit { 
             it[PreferencesKeys.DEEP_SLEEP_HOOK_ENABLED] = enabled
-            it[PreferencesKeys.DEEP_SLEEP_ENABLED] = enabled  // 兼容旧版本
+            it[PreferencesKeys.DEEP_SLEEP_ENABLED] = enabled
         }
     }
     
@@ -209,7 +206,7 @@ class SettingsRepository(private val context: Context) {
     suspend fun setCpuModeOnScreen(mode: String) {
         context.dataStore.edit { 
             it[PreferencesKeys.CPU_MODE_ON_SCREEN] = mode
-            it[PreferencesKeys.CPU_MODE] = mode  // 兼容旧版本
+            it[PreferencesKeys.CPU_MODE] = mode
         }
     }
     
@@ -220,7 +217,7 @@ class SettingsRepository(private val context: Context) {
     suspend fun setAutoSwitchCpuMode(enabled: Boolean) {
         context.dataStore.edit { 
             it[PreferencesKeys.AUTO_SWITCH_CPU_MODE] = enabled
-            it[PreferencesKeys.AUTO_CPU_MODE] = enabled  // 兼容旧版本
+            it[PreferencesKeys.AUTO_CPU_MODE] = enabled
         }
     }
     
