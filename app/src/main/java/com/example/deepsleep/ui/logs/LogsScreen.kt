@@ -1,10 +1,10 @@
 package com.example.deepsleep.ui.logs
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Download
@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.deepsleep.model.LogEntry
@@ -104,7 +105,7 @@ fun LevelFilter(
             .horizontalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    {
+    ) {  // 这里添加缺失的括号
         // 全部
         FilterChip(
             selected = selectedLevel == null,
@@ -242,7 +243,7 @@ fun LogLevelBadge(level: LogLevel) {
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
             color = color,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -256,4 +257,4 @@ fun getLogLevelColor(level: LogLevel): Color {
         LogLevel.ERROR -> Color.Red
         LogLevel.FATAL -> Color(0xFFB71C1C)
     }
-)}
+} // 这里修正了多余的括号
