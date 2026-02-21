@@ -70,16 +70,17 @@ class MainActivity : ComponentActivity() {
                                 viewModel = viewModel,
                                 onNavigateToLogs = { navController.navigate("logs") },
                                 onNavigateToWhitelist = { navController.navigate("whitelist") },
-                                onNavigateToCpuParams = { navController.navigate("cpuParams") }
+                                onNavigateToCpuParams = { navController.navigate("cpuParams") },
+                                onNavigateToSettings = { navController.navigate("settings") } // 假设需要设置页面
                             )
                         }
                         composable("logs") {
-                            // ✅ 修正参数名为 onBack
-                            LogsScreen(onBack = { navController.popBackStack() })
+                            // 使用正确的参数名 onNavigateBack
+                            LogsScreen(onNavigateBack = { navController.popBackStack() })
                         }
                         composable("whitelist") {
-                            // ✅ 修正参数名为 onBack
-                            WhitelistScreen(onBack = { navController.popBackStack() })
+                            // 使用正确的参数名 onNavigateBack
+                            WhitelistScreen(onNavigateBack = { navController.popBackStack() })
                         }
                         composable("cpuParams") {
                             CpuParamsScreen(
