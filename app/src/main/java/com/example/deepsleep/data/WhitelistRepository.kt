@@ -84,34 +84,3 @@ class WhitelistRepository {
         }
     }
 }
-
-    /**
-     * 添加应用到白名单
-     */
-    suspend fun addToWhitelist(packageName: String, appName: String) {
-        dataStore.edit { preferences ->
-            val currentList = preferences[PreferencesKeys.WHITELIST] ?: emptyList()
-            val newItem = WhitelistItem(packageName, appName)
-            preferences[PreferencesKeys.WHITELIST] = currentList + newItem
-        }
-    }
-
-    /**
-     * 从白名单移除应用
-     */
-    suspend fun removeFromWhitelist(packageName: String) {
-        dataStore.edit { preferences ->
-            val currentList = preferences[PreferencesKeys.WHITELIST] ?: emptyList()
-            preferences[PreferencesKeys.WHITELIST] = currentList.filter { it.packageName != packageName }
-        }
-    }
-
-    /**
-     * 检查应用是否在白名单中
-     */
-    fun isWhitelisted(packageName: String): Flow<Boolean> {
-        return dataStore.data.map { preferences ->
-            val whitelist = preferences[PreferencesKeys.WHITELIST] ?: emptyList()
-            whitelist.any { it.packageName == packageName }
-        }
-    }
