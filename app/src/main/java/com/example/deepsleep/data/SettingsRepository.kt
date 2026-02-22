@@ -81,6 +81,11 @@ class SettingsRepository(private val context: Context) {
         val DEEP_SLEEP_ENABLED = booleanPreferencesKey("deep_sleep_enabled")
         val CPU_MODE = stringPreferencesKey("cpu_mode")
         val AUTO_CPU_MODE = booleanPreferencesKey("auto_cpu_mode")
+
+        // ========== 新增键 ==========
+        val MOTION_BACKUP = stringPreferencesKey("motion_backup")
+        val BACKGROUND_WHITELIST = stringPreferencesKey("background_whitelist")
+        val SUPPRESS_WHITELIST = stringPreferencesKey("suppress_whitelist")
     }
     
     val settings: Flow<AppSettings> = context.dataStore.data.map { preferences ->
@@ -338,5 +343,34 @@ class SettingsRepository(private val context: Context) {
     
     suspend fun setNotificationsEnabled(enabled: Boolean) {
         context.dataStore.edit { it[PreferencesKeys.NOTIFICATIONS_ENABLED] = enabled }
+    }
+
+    // ========== 新增方法 ==========
+    suspend fun saveMotionBackup(state: String) {
+        context.dataStore.edit { it[PreferencesKeys.MOTION_BACKUP] = state }
+    }
+
+    suspend fun getMotionBackup(): String? {
+        return context.dataStore.data.first()[PreferencesKeys.MOTION_BACKUP]
+    }
+
+    suspend fun getBackgroundWhitelist(): List<String> {
+        val str = context.dataStore.data.first()[PreferencesKeys.BACKGROUND_WHITELIST] ?: return emptyList()
+        return str.split(",").filter { it.isNotBlank() }
+    }
+
+    suspend fun setBackgroundWhitelist(list: List<String>) {
+        val str = list.joinToString(",")
+        context.dataStore.edit { it[PreferencesKeys.BACKGROUND_WHITELIST] = str }
+    }
+
+    suspend fun getSuppressWhitelist(): List<String> {
+        val str = context.dataStore.data.first()[PreferencesKeys.SUPPRESS_WHITELIST] ?: return emptyList()
+        return str.split(",").filter { it.isNotBlank() }
+    }
+
+    suspend fun setSuppressWhitelist(list: List<String>) {
+        val str = list.joinToString(",")
+        context.dataStore.edit { it[PreferencesKeys.SUPPRESS_WHITELIST] = str }
     }
 }
