@@ -4,10 +4,7 @@ import com.example.deepsleep.data.LogRepository
 
 object PowerSaverController {
     private const val TAG = "PowerSaverController"
-    
-    /**
-     * 开启系统省电模式
-     */
+
     suspend fun enablePowerSaver(): Boolean {
         return try {
             LogRepository.info(TAG, "开启系统省电模式")
@@ -17,10 +14,7 @@ object PowerSaverController {
             false
         }
     }
-    
-    /**
-     * 关闭系统省电模式
-     */
+
     suspend fun disablePowerSaver(): Boolean {
         return try {
             LogRepository.info(TAG, "关闭系统省电模式")
@@ -30,10 +24,7 @@ object PowerSaverController {
             false
         }
     }
-    
-    /**
-     * 检查系统省电模式状态
-     */
+
     suspend fun isEnabled(): Boolean {
         return try {
             val result = RootCommander.exec("settings get global low_power")
@@ -42,10 +33,7 @@ object PowerSaverController {
             false
         }
     }
-    
-    /**
-     * 启用激进省电模式
-     */
+
     suspend fun enableAggressiveMode(): Boolean {
         return try {
             LogRepository.info(TAG, "启用激进省电模式")
@@ -60,10 +48,7 @@ object PowerSaverController {
             false
         }
     }
-    
-    /**
-     * 恢复默认省电设置
-     */
+
     suspend fun restoreDefaults(): Boolean {
         return try {
             LogRepository.info(TAG, "恢复默认省电设置")
