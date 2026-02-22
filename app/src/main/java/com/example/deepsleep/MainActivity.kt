@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             val rootAccessGranted = RootCommander.requestRootAccess()
-            
+
             if (rootAccessGranted) {
                 val hasRoot = RootCommander.checkRoot()
                 if (hasRoot) {
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ToastComponent()
-            
+
             DeepSleepTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
